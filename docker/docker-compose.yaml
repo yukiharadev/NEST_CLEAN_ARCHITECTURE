@@ -1,0 +1,28 @@
+services:
+  postgres-db:
+    image: postgres:17-alpine
+    container_name: postgres-db
+    restart: unless-stopped
+    ports:
+      - "5400:5432"
+    environment:
+      POSTGRES_USER: yukihara
+      POSTGRES_PASSWORD: yukihara
+      POSTGRES_DB: yukihara
+    volumes:
+      - postgres-db-data:/var/lib/postgresql/data
+    networks:
+      - postgres-db-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U yukihara -d yukihara"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres-db-data:
+    driver: local
+
+networks:
+  postgres-db-network:
+    driver: bridge

@@ -1,0 +1,1 @@
+export type ICommand<TResult = void> = object;
