@@ -12,17 +12,37 @@ services:
     volumes:
       - postgres-db-data:/var/lib/postgresql/data
     networks:
-      - postgres-db-network
+      - app-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U yukihara -d yukihara"]
       interval: 10s
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:latest
+    container_name: redis-container
+    restart: unless-stopped
+    ports:
+      - "6000:6379"
+    volumes:
+      - redis-data:/data
+    command: ["redis-server", "--requirepass", "yukihara"]
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "yukihara", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
 volumes:
   postgres-db-data:
     driver: local
+  redis-data:
+    driver: local
 
 networks:
-  postgres-db-network:
+  app-network:
     driver: bridge
